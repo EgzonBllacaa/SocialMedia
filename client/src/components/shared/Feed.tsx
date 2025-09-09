@@ -1,5 +1,5 @@
 import useFetch from "../../hooks/useFetch";
-import type { Post } from "../../hooks/types";
+import type { Post } from "../../types/types.ts";
 import PostComp from "./PostComp";
 import { useState } from "react";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
@@ -9,6 +9,7 @@ const Feed = () => {
   const [posts, loading, error] = useFetch<Post[]>(`${Backend}/api/posts`);
   const [visiblePosts, setVisiblePosts] = useState(6);
   const handleLoadMore = () => {
+    if (posts === null) return;
     setVisiblePosts((prev) => Math.min(prev + 3, posts.length));
   };
   const handleLoadLess = () => {
@@ -21,7 +22,7 @@ const Feed = () => {
   return (
     <div className="flex flex-col items-center">
       {posts.slice(0, visiblePosts).map((post) => (
-        <PostComp post={post} />
+        <PostComp key={post.id} post={post} />
       ))}
       {visiblePosts < 3 ? (
         <button

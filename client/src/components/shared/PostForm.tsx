@@ -11,7 +11,7 @@ const PostForm = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!currentUser) return navigate("/login");
     if (body.trim().length === 0 || title.trim().length === 0) {
@@ -31,7 +31,7 @@ const PostForm = () => {
 
   return (
     <div className="flex flex-col mx-auto w-3/5 min-h-screen ">
-      <form action="" onClick={handleSubmit} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div className="flex flex-col">
           <label htmlFor="" className="font-bold text-lg">
             Title:

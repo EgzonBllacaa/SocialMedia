@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
-import type { Post } from "../../hooks/types";
+import type { Post } from "../../types/types";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect, useState } from "react";
 import {
@@ -20,7 +20,7 @@ import { Backend } from "../../utils/BackendRoute";
 
 const SinglePost = () => {
   const { id } = useParams();
-  const [post, loading, error, fetchData] = useFetch<Post>(
+  const [post, loading, error, fetchData] = useFetch<Post | null>(
     `${Backend}/api/post/${id}`
   );
   const [comments, setComments] = useState<CommentType[]>([]);
@@ -42,6 +42,7 @@ const SinglePost = () => {
     const fetchComments = async () => {
       try {
         const res = await fetch(`${Backend}/api/post/getcomments/${post.id}`);
+        if (!res.ok) throw new Error("Failed to fetch comments");
         const data = await res.json();
         setComments(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -74,15 +75,21 @@ const SinglePost = () => {
     navigate("/");
   };
 
-  const handleEdit = async () => {
-    await fetch(`${Backend}/api/post/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, body }),
-      credentials: "include",
-    });
-    fetchData();
-    setIsEditing(false);
+  const handleSave = async () => {
+    if (!post) return;
+    try {
+      const res = await fetch(`${Backend}/api/post/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, body }),
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to save post");
+      await fetchData();
+      setIsEditing(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -115,7 +122,7 @@ const SinglePost = () => {
               </button>
               <button
                 className="bg-zinc-400 px-4 py-2 rounded hover:bg-zinc-500 cursor-pointer"
-                onClick={() => setIsEditing((prev) => !prev)}
+                onClick={() => setIsEditing(true)}
               >
                 <FaPen />
               </button>
@@ -207,7 +214,8 @@ const SinglePost = () => {
 
           <button
             className="w-full bg-[#DBC837] py-2 mt-2 cursor-pointer hover:bg-[#C4A300] rounded"
-            onClick={handleEdit}
+            disabled={!title.trim() || !body.trim()}
+            onClick={handleSave}
           >
             Save Changes
           </button>

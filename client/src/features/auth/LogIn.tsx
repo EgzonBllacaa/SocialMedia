@@ -4,6 +4,7 @@ import CtaBtn from "../../components/ui/CtaBtn";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Backend } from "../../utils/BackendRoute";
+import type { User } from "../../types/types";
 
 // type Props = {};
 
@@ -13,7 +14,6 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [data, setData] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const { setCurrentUser } = useAuth();
@@ -22,33 +22,36 @@ const Login = () => {
   const handlePost = async () => {
     setLoading(true);
     setError("");
-    const response = await fetch(
-      `${Backend}/api/${isLoggedIn ? "login" : "signup"}`,
-      {
-        credentials: "include",
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          isLoggedIn ? { email, password } : { username, email, password }
-        ),
+    try {
+      const response = await fetch(
+        `${Backend}/api/${isLoggedIn ? "login" : "signup"}`,
+        {
+          credentials: "include",
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(
+            isLoggedIn ? { email, password } : { username, email, password }
+          ),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Something went wrong");
+        setLoading(false);
+        return;
       }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      setError(errorData.message || "Something went wrong");
+      const user: User = await response.json();
+      setCurrentUser(user);
+      // After login/signup, navigate to home and reload to refresh context
+      if (isLoggedIn) {
+        navigate("/", { replace: true });
+        window.location.reload();
+      }
       setLoading(false);
-      return;
-    }
-    const user = await response.json();
-
-    setData(user);
-    setCurrentUser(user);
-    setLoading(false);
-    // After login/signup, navigate to home and reload to refresh context
-    if (isLoggedIn) {
-      navigate("/", { replace: true });
-      window.location.reload();
+    } catch (err: unknown) {
+      if (err instanceof Error) setError(err.message);
+      else setError(String(err));
     }
   };
 
@@ -78,7 +81,7 @@ const Login = () => {
 
               <input
                 className="py-2 bg-[#121212] text-zinc-200 border border-zinc-700 px-2"
-                type="text"
+                type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

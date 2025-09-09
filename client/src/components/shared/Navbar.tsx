@@ -6,15 +6,16 @@ import { Backend } from "../../utils/BackendRoute";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { pathname } = useLocation();
   const [loading, setLoading] = useState(false);
   const { currentUser, setCurrentUser } = useAuth();
 
-  if (["/signup", "/login"].includes(location.pathname)) {
+  if (["/signup", "/login"].includes(pathname)) {
     return null;
   }
 
   const handleLogOut = async () => {
+    setLoading(true);
     try {
       setLoading(true);
       const res = await fetch(`${Backend}/api/logout`, {
@@ -31,7 +32,6 @@ const Navbar = () => {
       console.log(error);
       setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -52,12 +52,14 @@ const Navbar = () => {
           <CtaBtn
             className="px-4 cursor-pointer bg-transparent border  hover:bg-zinc-800 "
             onClick={handleLogOut}
+            disabled={loading}
           >
             {loading ? "logging out..." : "Log-out"}
           </CtaBtn>
         ) : (
           <button
             onClick={() => navigate("/login")}
+            disabled={loading}
             className="px-4 cursor-pointer border-zinc-300 border hover:bg-zinc-900  hover:border-zinc-100  rounded-xl py-2  "
           >
             Log-in

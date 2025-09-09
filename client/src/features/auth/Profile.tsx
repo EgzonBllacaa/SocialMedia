@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import Backend from "../../utils/BackendRoute.js";
+import { Backend } from "../../utils/BackendRoute";
+import type { Information } from "../../types/types";
 
 const Profile = () => {
-  const [data, setData] = useState<any>({});
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [location, setLocation] = useState("");
+  const [data, setData] = useState<Information | null>(null);
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
   const [birthDate, setBirthDate] = useState<Date | null>(null);
-  const [education, setEducation] = useState("");
-  const [skills, setSkills] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [editMode, setEditMode] = useState(false);
+  const [education, setEducation] = useState<string>("");
+  const [skills, setSkills] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [editMode, setEditMode] = useState<boolean>(false);
   const { currentUser } = useAuth();
 
   // Fetch user profile data
@@ -28,8 +29,12 @@ const Profile = () => {
         });
         const userData = await res.json();
         setData(userData);
-      } catch (err) {
-        setError("Failed to load profile");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(`Failed to load profile: ${err.message}`);
+        } else {
+          setError("Failed to load profile");
+        }
       } finally {
         setLoading(false);
       }
@@ -40,12 +45,12 @@ const Profile = () => {
 
   // Open edit mode and populate form
   const handleEdit = () => {
-    setFirstName(data.firstName || "");
-    setLastName(data.lastName || "");
-    setLocation(data.location || "");
-    setEducation(data.education || "");
-    setBirthDate(data.birthDate ? new Date(data.birthDate) : null);
-    setSkills(data.skills?.map((s) => s.name).join(", ") || "");
+    setFirstName(data?.firstName || "");
+    setLastName(data?.lastName || "");
+    setLocation(data?.location || "");
+    setEducation(data?.education || "");
+    setBirthDate(data?.birthDate ? new Date(data.birthDate) : null);
+    setSkills(data?.skills?.map((s) => s.name).join(", ") || "");
     setEditMode(true);
   };
 
@@ -67,7 +72,7 @@ const Profile = () => {
           firstName,
           lastName,
           location,
-          birthDate,
+          birthDate: birthDate ? birthDate.toISOString() : null,
           education,
           skills,
         }),
@@ -75,8 +80,12 @@ const Profile = () => {
       const updatedData = await res.json();
       setData(updatedData);
       setEditMode(false);
-    } catch (err) {
-      setError("Failed to save profile");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(`Failed to save profile: ${err.message}`);
+      } else {
+        setError("Failed to save profile");
+      }
     }
   };
 
@@ -90,7 +99,7 @@ const Profile = () => {
       </h1>
 
       {/* Display profile info */}
-      {!editMode && data && Object.keys(data).length > 0 && (
+      {!editMode && data && (
         <div className="bg-slate-800 py-4 px-10 rounded-lg">
           <div className="flex justify-between border-b border-slate-600 pb-2 items-center">
             <h6 className="text-slate-200 text-2xl font-medium">

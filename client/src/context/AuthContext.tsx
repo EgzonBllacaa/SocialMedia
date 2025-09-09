@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { Backend } from "../utils/BackendRoute";
+import type { User } from "../types/types";
 
 type AuthContextType = {
   currentUser: User | null;
@@ -18,7 +19,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 );
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Fetching User profile
@@ -30,13 +31,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           credentials: "include",
         });
         if (res.ok) {
-          const user = await res.json();
+          const user: User = await res.json();
           setCurrentUser(user);
           console.log(user);
         }
         setLoading(false);
-      } catch {
+      } catch (err) {
+        console.error("Failed to fetch user", err);
         setCurrentUser(null);
+        setLoading(false);
       }
     };
     fetchUser();

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import type { Post } from "../../hooks/types";
+import type { Post } from "../../types/types";
 import { useEffect, useState } from "react";
 import { FaThumbsUp, FaThumbsDown, FaComment } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
