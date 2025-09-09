@@ -40,8 +40,9 @@ export const registerUser = async (req, res) => {
 
     res.cookie("token", jwt_token, {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      sameSite: "None", // required for cross-site cookies
+      secure: true, // required for HTTPS
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
     return res
       .status(201)
