@@ -1,0 +1,47 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+/* Remove default list bullets and heading dots */
+
+@theme {
+  --font-poppins: "Poppins", sans-serif;
+}
+
+.tiptap-editor h1,
+.tiptap-editor h2,
+.tiptap-editor h3,
+.tiptap-editor h4,
+.tiptap-editor h5,
+.tiptap-editor h6 {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+.tiptap-editor ul,
+.tiptap-editor ol {
+  margin-left: 1.2em; /* optional */
+  padding-left: 0;
+}
+
+.tiptap-editor ul {
+  list-style: disc; /* for bullets */
+}
+.tiptap-editor ol {
+  list-style: decimal; /* for numbered lists */
+}
+.tiptap-editor h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 1rem 0;
+}
+
+.tiptap-editor h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin: 0.75rem 0;
+}
+.tip-tap-editor {
+  white-space: normal; /* allow wrapping */
+  word-wrap: break-word; /* break long words */
+  overflow-x: hidden; /* hide horizontal overflow */
+}
