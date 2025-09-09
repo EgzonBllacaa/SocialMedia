@@ -2,10 +2,11 @@ import { useState } from "react";
 import CtaBtn from "../ui/CtaBtn";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import type { CommentType } from "./CommentSection";
 
 type Props = {
   postId: number;
-  onAddComment: (newComment: string) => void;
+  onAddComment: (newComment: CommentType) => void;
 };
 
 const CommentForm = ({ postId, onAddComment }: Props) => {
