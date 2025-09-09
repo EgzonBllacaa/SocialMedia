@@ -4,6 +4,7 @@ import CommentForm from "./CommentForm";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { Backend } from "../../utils/BackendRoute";
 
 export type CommentType = {
   id: number;
@@ -27,15 +28,12 @@ const CommentSection = ({ postId, comments, setComments }: Props) => {
   const navigate = useNavigate();
 
   const handleUpdateComment = async (commentId: number, newBody: string) => {
-    const res = await fetch(
-      `http://localhost:4000/api/post/comment/${commentId}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ body: newBody }),
-      }
-    );
+    const res = await fetch(`${Backend}/api/post/comment/${commentId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ body: newBody }),
+    });
     const data = await res.json();
 
     setComments((prev) =>
@@ -49,13 +47,10 @@ const CommentSection = ({ postId, comments, setComments }: Props) => {
 
   const handleLike = async (commentId: number) => {
     if (!currentUser) return navigate("/login");
-    const res = await fetch(
-      `http://localhost:4000/api/COMMENT/${commentId}/like`,
-      {
-        method: "POST",
-        credentials: "include",
-      }
-    );
+    const res = await fetch(`${Backend}/api/COMMENT/${commentId}/like`, {
+      method: "POST",
+      credentials: "include",
+    });
     const data = await res.json();
     setComments((prev) =>
       prev.map((comment) =>
@@ -67,13 +62,10 @@ const CommentSection = ({ postId, comments, setComments }: Props) => {
   };
 
   const handleDelete = async (commentId: number) => {
-    const res = await fetch(
-      `http://localhost:4000/api/post/comment/${commentId}`,
-      {
-        method: "DELETE",
-        credentials: "include",
-      }
-    );
+    const res = await fetch(`${Backend}/api/post/comment/${commentId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
     if (res.ok)
       setComments((prev) => prev.filter((comment) => comment.id !== commentId));
   };

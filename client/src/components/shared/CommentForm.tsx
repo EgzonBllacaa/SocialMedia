@@ -3,6 +3,7 @@ import CtaBtn from "../ui/CtaBtn";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import type { CommentType } from "./CommentSection";
+import { Backend } from "../../utils/BackendRoute";
 
 type Props = {
   postId: number;
@@ -19,15 +20,12 @@ const CommentForm = ({ postId, onAddComment }: Props) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    const res = await fetch(
-      `http://localhost:4000/api/post/comments/${postId}`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body: newComment }),
-      }
-    );
+    const res = await fetch(`${Backend}/api/post/comments/${postId}`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ body: newComment }),
+    });
     const data = await res.json();
     onAddComment(data);
     setNewComment("");
