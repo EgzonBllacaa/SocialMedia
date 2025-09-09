@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Backend } from "../../utils/BackendRoute";
 import type { Information } from "../../types/types";
@@ -15,6 +15,7 @@ const Profile = () => {
   const [error, setError] = useState<string>("");
   const [editMode, setEditMode] = useState<boolean>(false);
   const { currentUser } = useAuth();
+  const reloadDone = useRef(false);
 
   // Fetch user profile data
   useEffect(() => {
@@ -31,7 +32,10 @@ const Profile = () => {
         const userData = await res.json();
         if (res.ok) {
           setData(userData);
-          window.location.reload();
+          if (!reloadDone.current) {
+            reloadDone.current = true;
+            window.location.reload();
+          }
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
