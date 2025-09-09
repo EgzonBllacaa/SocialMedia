@@ -1,4 +1,4 @@
-import prisma from "../config/prismaClient";
+import prisma from "../config/prismaClient.js";
 
 export const createPost = async (req, res) => {
   const { title, body } = req.body;
