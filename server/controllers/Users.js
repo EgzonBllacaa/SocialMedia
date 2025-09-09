@@ -40,7 +40,7 @@ export const registerUser = async (req, res) => {
 
     res.cookie("token", jwt_token, {
       httpOnly: true,
-      sameSite: "None", // required for cross-site cookies
+      sameSite: "none", // required for cross-site cookies
       secure: true, // required for HTTPS
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
@@ -85,10 +85,11 @@ export const loginUser = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    res.cookie("token", newToken, {
+    res.cookie("token", jwt_token, {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      sameSite: "none", // required for cross-site cookies
+      secure: true, // required for HTTPS
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
     res
       .status(200)

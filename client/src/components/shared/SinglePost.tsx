@@ -41,7 +41,9 @@ const SinglePost = () => {
     if (!post?.id) return;
     const fetchComments = async () => {
       try {
-        const res = await fetch(`${Backend}/api/post/getcomments/${post.id}`);
+        const res = await fetch(`${Backend}/api/post/getcomments/${post.id}`, {
+          credentials: "include",
+        });
         if (!res.ok) throw new Error("Failed to fetch comments");
         const data = await res.json();
         setComments(Array.isArray(data) ? data : []);
