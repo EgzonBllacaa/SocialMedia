@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../config/prismaClient";
 
 export const createPost = async (req, res) => {
   const { title, body } = req.body;
