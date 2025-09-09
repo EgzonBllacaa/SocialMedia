@@ -19,6 +19,7 @@ const Profile = () => {
   // Fetch user profile data
   useEffect(() => {
     if (!currentUser) return;
+
     setLoading(true);
 
     const getUserProfile = async () => {
@@ -28,7 +29,10 @@ const Profile = () => {
           credentials: "include",
         });
         const userData = await res.json();
-        setData(userData);
+        if (res.ok) {
+          setData(userData);
+          window.location.reload();
+        }
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(`Failed to load profile: ${err.message}`);

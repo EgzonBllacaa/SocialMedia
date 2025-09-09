@@ -46,7 +46,6 @@ const Login = () => {
       // After login/signup, navigate to home and reload to refresh context
       if (isLoggedIn) {
         navigate("/", { replace: true });
-        window.location.reload();
       }
       setLoading(false);
     } catch (err: unknown) {
