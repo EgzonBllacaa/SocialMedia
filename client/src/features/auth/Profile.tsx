@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Backend } from "../../utils/BackendRoute";
 import type { Information } from "../../types/types";
@@ -15,7 +15,6 @@ const Profile = () => {
   const [error, setError] = useState<string>("");
   const [editMode, setEditMode] = useState<boolean>(false);
   const { currentUser } = useAuth();
-  const reloadDone = useRef(false);
 
   // Fetch user profile data
   useEffect(() => {
@@ -32,8 +31,8 @@ const Profile = () => {
         const userData = await res.json();
         if (res.ok) {
           setData(userData);
-          if (!reloadDone.current) {
-            reloadDone.current = true;
+          if (!sessionStorage.getItem("profileReloaded")) {
+            sessionStorage.setItem("profileReloaded", "true");
             window.location.reload();
           }
         }
