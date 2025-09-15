@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Backend } from "../../utils/BackendRoute";
 import type { User } from "../../types/types";
+import { FadeLoader } from "react-spinners";
 
 // type Props = {};
 
@@ -56,7 +57,11 @@ const Login = () => {
 
   return (
     <>
-      {loading && <span>Loading...</span>}
+      {loading && (
+        <div className="flex justify-center">
+          <FadeLoader loading={loading} color="gray" />
+        </div>
+      )}
       {error && <span className="text-red-500">{error}</span>}
       <div className="w-full flex justify-center items-center min-h-screen">
         <div className="flex flex-col items-center">

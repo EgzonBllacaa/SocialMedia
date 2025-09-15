@@ -23,6 +23,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+console.log("Getting to backend");
 app.use("/api", router);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

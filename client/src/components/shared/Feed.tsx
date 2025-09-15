@@ -4,23 +4,30 @@ import PostComp from "./PostComp";
 import { useState } from "react";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { Backend } from "../../utils/BackendRoute.ts";
+import { FadeLoader } from "react-spinners";
 
 const Feed = () => {
   const [posts, loading, error] = useFetch<Post[]>(`${Backend}/api/posts`);
-  const [visiblePosts, setVisiblePosts] = useState(6);
+  const [visiblePosts, setVisiblePosts] = useState(3);
   const handleLoadMore = () => {
     if (posts === null) return;
+    if (posts.length <= visiblePosts) return;
     setVisiblePosts((prev) => Math.min(prev + 3, posts.length));
   };
   const handleLoadLess = () => {
     setVisiblePosts((prev) => Math.max(prev - 3, 3));
   };
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center ">
+        <FadeLoader color="gray" loading={loading} />
+      </div>
+    );
   if (error) return <p>{error}</p>;
   if (!posts) return <p>No posts found</p>;
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col  items-center">
       {posts.slice(0, visiblePosts).map((post) => (
         <PostComp key={post.id} post={post} />
       ))}
@@ -46,7 +53,7 @@ const Feed = () => {
           <div>
             <div className="flex items-center">
               <button
-                disabled={visiblePosts <= 6}
+                disabled={visiblePosts <= 3}
                 className="w-fit p-2 cursor-pointer  disabled:text-zinc-500"
                 onClick={handleLoadLess}
               >

@@ -17,6 +17,7 @@ import { MdFormatListNumbered } from "react-icons/md";
 import "../../index.css";
 import CommentSection, { type CommentType } from "./CommentSection";
 import { Backend } from "../../utils/BackendRoute";
+import { FadeLoader } from "react-spinners";
 
 const SinglePost = () => {
   const { id } = useParams();
@@ -64,7 +65,12 @@ const SinglePost = () => {
     }
   }, [editor, post]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center ">
+        <FadeLoader loading={loading} color="gray" />
+      </div>
+    );
   if (error) return <p>{error}</p>;
   if (!post) return <p>Post not found</p>;
 

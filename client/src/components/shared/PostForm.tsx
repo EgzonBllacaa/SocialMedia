@@ -3,11 +3,13 @@ import CtaBtn from "../ui/CtaBtn";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Backend } from "../../utils/BackendRoute";
+import { FadeLoader } from "react-spinners";
 
 const PostForm = () => {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [error, setError] = useState("");
+  const [title, setTitle] = useState<string>("");
+  const [body, setBody] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
@@ -17,6 +19,7 @@ const PostForm = () => {
     if (body.trim().length === 0 || title.trim().length === 0) {
       return setError("Error each field is required");
     }
+    setLoading(true);
     await fetch(`${Backend}/api/post`, {
       method: "POST",
       headers: {
@@ -25,9 +28,15 @@ const PostForm = () => {
       body: JSON.stringify({ title, body }),
       credentials: "include",
     });
-
+    setLoading(false);
     navigate("/");
   };
+  if (loading)
+    return (
+      <div className="flex justify-center">
+        <FadeLoader color="gray" loading={loading} />
+      </div>
+    );
 
   return (
     <div className="flex flex-col mx-auto w-3/5 min-h-screen ">

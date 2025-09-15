@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Backend } from "../../utils/BackendRoute";
 import type { Information } from "../../types/types";
+import { FadeLoader } from "react-spinners";
 
 const Profile = () => {
   const [data, setData] = useState<Information | null>(null);
@@ -70,6 +71,7 @@ const Profile = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const method = data?.firstName ? "PUT" : "POST";
       const res = await fetch(`${Backend}/api/profile/information`, {
         method,
@@ -93,20 +95,29 @@ const Profile = () => {
       } else {
         setError("Failed to save profile");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center ">
+        <FadeLoader loading={loading} color="gray" />
+      </div>
+    );
   if (error) return <p>{error}</p>;
+  console.log(editMode);
+  console.log(JSON.stringify(data));
 
   return (
     <div className="min-h-screen py-10 flex flex-col gap-20">
-      <h1 className="text-6xl">
+      <h1 className="md:text-6xl text-2xl font-bold ">
         Hello {data?.firstName?.trim() || currentUser?.email || "Guest"}
       </h1>
 
       {/* Display profile info */}
-      {!editMode && data && (
+      {!editMode && data !== null && (
         <div className="bg-slate-800 py-4 px-10 rounded-lg">
           <div className="flex justify-between border-b border-slate-600 pb-2 items-center">
             <h6 className="text-slate-200 text-2xl font-medium">
@@ -125,19 +136,19 @@ const Profile = () => {
                 <div className="flex flex-col w-full max-w-1/3">
                   <span className="text-zinc-400">First Name</span>
                   <span className="font-semibold">
-                    {data.firstName || "N/A"}
+                    {data?.firstName || "N/A"}
                   </span>
                 </div>
                 <div className="flex flex-col w-full max-w-1/3">
                   <span className="text-zinc-400">Last Name</span>
                   <span className="font-semibold">
-                    {data.lastName || "N/A"}
+                    {data?.lastName || "N/A"}
                   </span>
                 </div>
                 <div className="flex flex-col w-full max-w-1/3">
                   <span className="text-zinc-400">Location</span>
                   <span className="font-semibold">
-                    {data.location || "N/A"}
+                    {data?.location || "N/A"}
                   </span>
                 </div>
               </div>
@@ -145,13 +156,13 @@ const Profile = () => {
                 <div className="flex flex-col w-full max-w-1/3">
                   <span className="text-zinc-400">Education</span>
                   <span className="font-semibold">
-                    {data.education || "N/A"}
+                    {data?.education || "N/A"}
                   </span>
                 </div>
                 <div className="flex flex-col w-full max-w-xl">
                   <span className="text-zinc-400">Skills</span>
                   <div className="flex flex-wrap gap-2">
-                    {data.skills?.map((s) => (
+                    {data?.skills?.map((s) => (
                       <span
                         key={s.id}
                         className="border font-semibold mr-2 border-slate-500 rounded px-4 border-t-0 border-r-0"
@@ -164,8 +175,8 @@ const Profile = () => {
                 <div className="flex flex-col w-full max-w-2xl">
                   <span className="text-zinc-400">Date of Birth</span>
                   <span className="font-semibold">
-                    {data.birthDate
-                      ? new Date(data.birthDate).toLocaleDateString("en-US", {
+                    {data?.birthDate
+                      ? new Date(data?.birthDate).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "long",
                           day: "numeric",
@@ -183,7 +194,7 @@ const Profile = () => {
       {editMode && (
         <div className="w-full max-w-[1600px] px-10 mx-auto bg-[hsl(230,42%,10%)] py-10">
           <h3 className="text-3xl mb-8 border-b w-full pb-2">
-            Edit Personal Information
+            {data === null ? "Add" : "Edit"} Personal Information
           </h3>
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="sm:flex-row flex flex-col gap-4 w-full">

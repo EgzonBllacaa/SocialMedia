@@ -12,11 +12,17 @@ import PostForm from "./components/shared/PostForm";
 import Navbar from "./components/shared/Navbar";
 import SinglePost from "./components/shared/SinglePost";
 import { useAuth } from "./context/AuthContext";
+import { FadeLoader } from "react-spinners";
 
 const App = () => {
   const { currentUser, loading } = useAuth();
 
-  if (loading) return <span>Loading...</span>;
+  if (loading)
+    return (
+      <div className="flex justify-center ">
+        <FadeLoader loading={loading} color="gray" />
+      </div>
+    );
   return (
     <Router>
       <Navbar />

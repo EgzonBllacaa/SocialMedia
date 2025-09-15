@@ -5,6 +5,14 @@ import prisma from "../config/prismaClient.js";
 
 dotenv.config();
 
+const cookieOptions = {
+  httpOnly: true,
+  path: "/",
+  sameSite: "none", // "none" only on prod
+  secure: true, // true only on HTTPS (prod)
+  maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+};
+
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
@@ -36,12 +44,7 @@ export const registerUser = async (req, res) => {
 
     const { password: _, ...UserWithoutPassword } = newUser;
 
-    res.cookie("token", jwt_token, {
-      httpOnly: true,
-      sameSite: "none", // required for cross-site cookies
-      secure: true, // required for HTTPS
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 day
-    });
+    res.cookie("token", jwt_token, cookieOptions);
     return res
       .status(201)
       .json({ token: jwt_token, user: UserWithoutPassword });
@@ -83,12 +86,7 @@ export const loginUser = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    res.cookie("token", newToken, {
-      httpOnly: true,
-      sameSite: "none", // required for cross-site cookies
-      secure: true, // required for HTTPS
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 day
-    });
+    res.cookie("token", newToken, cookieOptions);
     res
       .status(200)
       .json({ token: newToken, error: `User is successfully logged-in` });
@@ -98,12 +96,10 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutUser = (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  });
-  return res.status(200).json({ message: `Logged out successfully` });
+  console.log("Logging out user...");
+  console.log(req.cookies);
+  res.clearCookie("token", cookieOptions);
+  return res.status(200).json({ message: "Logged out successfully" });
 };
 export const userInfoUpdated = async (req, res) => {
   try {
