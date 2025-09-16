@@ -104,7 +104,7 @@ const SinglePost = () => {
     <div className="min-h-screen py-2 px-5 bg-slate-950">
       {/* Display post */}
       <div className="bg-slate-800 text-white px-5 py-14 rounded mb-5">
-        <h2 className="text-3xl font-bold mb-2">{post.title}</h2>
+        <h2 className="md:text-3xl text-xl font-bold mb-2">{post.title}</h2>
         <div
           className="tiptap-editor overflow-x-hidden mb-5"
           dangerouslySetInnerHTML={{ __html: post.body }}

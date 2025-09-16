@@ -39,9 +39,11 @@ const CommentForm = ({ postId, onAddComment }: Props) => {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Type your comment here..."
-          className="active:border-0 focus-visible:border-amber-200 border-zinc-800 py-1 w-full px-5 border"
+          className="active:outline-0 border-zinc-600 py-1 rounded-lg w-full px-5 border"
         />
-        <CtaBtn type="submit">Comment</CtaBtn>
+        <CtaBtn className="bg-white text-black hover:bg-zinc-200" type="submit">
+          Comment
+        </CtaBtn>
       </div>
     </form>
   );

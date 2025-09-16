@@ -69,18 +69,20 @@ const PostComp = ({ post }: Props) => {
         />
       </Link>
       <div className="flex justify-end gap-4 mt-2">
-        <button className="cursor-pointer" onClick={handleLike}>
-          {isLiked ? (
-            <div className="flex gap-2 items-center">
-              <FaThumbsUp className="text-[#9084ff]" />
-              <span className="text-sm">{likes}</span>
-            </div>
-          ) : (
-            <div className="flex gap-2 items-center">
-              <FaThumbsDown className="text-[#ececec]" />
-            </div>
-          )}
-        </button>
+        <div className="flex gap-2 items-center">
+          <button className="cursor-pointer" onClick={handleLike}>
+            {isLiked ? (
+              <div className="flex gap-2 items-center">
+                <FaThumbsUp className="text-[#9084ff]" />
+              </div>
+            ) : (
+              <div className="flex gap-2 items-center">
+                <FaThumbsDown className="text-[#ececec]" />
+              </div>
+            )}
+          </button>
+          <span className="text-sm">{likes}</span>
+        </div>
         <div className="flex gap-2 items-center">
           <button
             onClick={() => setIsCommentShown((prev) => !prev)}

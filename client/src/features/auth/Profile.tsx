@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Backend } from "../../utils/BackendRoute";
+import { isEmptyProfile } from "../../utils/isEmpty";
 import type { Information } from "../../types/types";
 import { FadeLoader } from "react-spinners";
 
@@ -108,16 +109,26 @@ const Profile = () => {
     );
   if (error) return <p>{error}</p>;
   console.log(editMode);
-  console.log(JSON.stringify(data));
-
+  console.log(data);
+  const isEmpty = isEmptyProfile(data);
+  console.log(isEmpty);
   return (
     <div className="min-h-screen py-10 flex flex-col gap-20">
-      <h1 className="md:text-6xl text-2xl font-bold ">
-        Hello {data?.firstName?.trim() || currentUser?.email || "Guest"}
-      </h1>
+      <div className="flex flex-col gap-3">
+        <h1 className="md:text-4xl text-2xl font-bold ">
+          Hello {data?.firstName?.trim() || currentUser?.email || "Guest"}
+        </h1>
+        <p className="text-sm">
+          Tip:
+          <span className="underline">
+            {" "}
+            Fill out the form below so i can call you by your name
+          </span>
+        </p>
+      </div>
 
       {/* Display profile info */}
-      {!editMode && data !== null && (
+      {!editMode && data !== undefined && (
         <div className="bg-slate-800 py-4 px-10 rounded-lg">
           <div className="flex justify-between border-b border-slate-600 pb-2 items-center">
             <h6 className="text-slate-200 text-2xl font-medium">
@@ -191,7 +202,7 @@ const Profile = () => {
       )}
 
       {/* Edit form */}
-      {editMode && (
+      {(editMode === true || isEmpty) && (
         <div className="w-full max-w-[1600px] px-10 mx-auto bg-[hsl(230,42%,10%)] py-10">
           <h3 className="text-3xl mb-8 border-b w-full pb-2">
             {data === null ? "Add" : "Edit"} Personal Information

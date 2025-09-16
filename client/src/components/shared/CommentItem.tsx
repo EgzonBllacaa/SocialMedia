@@ -53,10 +53,10 @@ const CommentItem = ({
         <div className="flex gap-2">
           {comment.liked ? (
             <button
-              className="text-green-900 cursor-pointer"
+              className="text-[#9084ff] cursor-pointer"
               onClick={() => onLike(comment.id)}
             >
-              <FaThumbsUp className="text-green-800" />
+              <FaThumbsUp className="" />
             </button>
           ) : (
             <button
