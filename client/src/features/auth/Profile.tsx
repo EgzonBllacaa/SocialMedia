@@ -202,7 +202,7 @@ const Profile = () => {
       )}
 
       {/* Edit form */}
-      {(editMode === true || isEmpty) && (
+      {(editMode === true || isEmpty === true) && (
         <div className="w-full max-w-[1600px] px-10 mx-auto bg-[hsl(230,42%,10%)] py-10">
           <h3 className="text-3xl mb-8 border-b w-full pb-2">
             {data === null ? "Add" : "Edit"} Personal Information
