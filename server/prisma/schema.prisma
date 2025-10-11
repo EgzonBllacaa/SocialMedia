@@ -1,93 +1,88 @@
 generator client {
   provider = "prisma-client-js"
-  
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Users {
+  id          Int          @id @unique @default(autoincrement())
+  username    String       @unique
+  email       String       @unique
+  password    String
+  role        Role         @default(USER)
+  comments    Comment[]
+  information Information?
+  likes       Like[]
+  posts       Post[]
+}
+
+model Like {
+  id        Int       @id @default(autoincrement())
+  type      LikeType?
+  userId    Int
+  postId    Int?
+  commentId Int?
+  Comment   Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  Post      Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  User      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+  @@index([userId])
+}
+
+model Post {
+  id        Int       @id @unique @default(autoincrement())
+  title     String    @unique
+  body      String    @db.VarChar(500)
+  likes     Int       @default(0)
+  name      String?
+  createdAt DateTime  @default(now())
+  userId    Int
+  comments  Comment[]
+  likedBy   Like[]
+  user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        Int      @id @unique @default(autoincrement())
+  body      String   @db.VarChar(500)
+  userId    Int
+  postId    Int
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likedBy   Like[]
+}
+
+model Information {
+  id        Int       @id @unique @default(autoincrement())
+  userId    Int       @unique
+  firstName String?
+  lastName  String?
+  location  String?
+  birthDate DateTime?
+  education String?
+  user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills    Skills[]
+}
+
+model Skills {
+  id            Int         @id @unique @default(autoincrement())
+  name          String
+  informationId Int
+  information   Information @relation(fields: [informationId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
   USER
   ADMIN
 }
+
 enum LikeType {
   POST
   COMMENT
-}
-model Users { 
-  id        Int       @unique @id @default(autoincrement())
-  username  String    @unique
-  email     String    @unique 
-  password  String
-  role      Role      @default(USER) // user || admin
-  
-  posts     Post[]
-  comments  Comment[]
-  likes     Like[]    
-  information Information?
-}
-
-
-model Like {
-  id        Int                   @id @default(autoincrement())
-  type      LikeType?              
-  userId    Int
-  postId    Int?
-  commentId Int?
-
-  User      Users                 @relation( fields: [userId], references: [id], onDelete: Cascade)
-  Post      Post?                 @relation( fields: [postId], references: [id], onDelete: Cascade)
-  Comment   Comment?              @relation( fields: [commentId], references: [id], onDelete:Cascade )
-
-  @@unique([userId, postId])
-  @@unique([userId, commentId])
-  @@index([userId])
-}
-model Post {
-  id          Int           @unique @id @default(autoincrement()) 
-  title       String        @unique
-  body        String        @db.VarChar(500)
-  likes       Int           @default(0)  
-  comments    Comment[] 
-  name        String?
-  createdAt   DateTime      @default(now())
-
-  userId      Int
-  user        Users         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  likedBy     Like[]        
-}
-
-model Comment {
-  id        Int                   @unique @id @default(autoincrement())
-  body      String                @db.VarChar(500)
-
-  userId    Int
-  user      Users                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  postId    Int
-  post      Post                  @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  likedBy   Like[]                
-
-  createdAt DateTime              @default(now())
-}
-model Information {
-  id        Int         @unique @id @default(autoincrement())
-  userId    Int         @unique
-  user      Users       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  firstName String?
-  lastName  String?
-  location  String?
-  birthDate DateTime?
-  education String?
-  skills    Skills[]
-}
-model Skills {
-  id            Int @unique @id @default(autoincrement())
-  name          String
-
-  informationId Int
-  information   Information @relation(fields: [informationId], references: [id], onDelete: Cascade)
 }
